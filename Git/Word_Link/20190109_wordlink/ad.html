@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <canvas id="c" width="500" height="450" style="border:1px solid #000"></canvas>
+    <script>
+    
+            
+            var a = function(n,event){
+                for(var i = 0;i<n;i++){
+                    function b (event){
+                        eval("function c () { console.log(event)} c(event)")
+                    }
+                    b(event)
+                }
+            }
+            a(3,4)
+
+
+            var arr = ["1","2","3","4"]
+            var arr1 =[]
+            for (const item of arr) {
+                if(item%2 === 0 ){
+                    arr1.push(item)
+                }
+            } 
+            console.log(arr1)
+    </script>
+</body>
+</html>
