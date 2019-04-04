@@ -54,7 +54,7 @@ class playGame extends Phaser.Scene {
             return;
         }
 
-        var downloadBtn = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'btn_download')
+        var downloadBtn = this.add.sprite(game.config.width / 2, game.config.height / 2, 'btn_download')
             .setInteractive();
 
         downloadBtn.on('pointerdown', function (pointer) {

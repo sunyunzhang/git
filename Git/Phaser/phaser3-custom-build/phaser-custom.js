@@ -6,26 +6,27 @@ var Extend = require('utils/object/Extend');
 var Phaser = {
 
     Game: require('boot/Game'),
-    GameObjects: {
-        DisplayList: require('gameobjects/DisplayList'),
-        UpdateList: require('gameobjects/UpdateList'),
+     GameObjects: {
+         DisplayList: require('gameobjects/DisplayList'),
+         UpdateList: require('gameobjects/UpdateList'),
 
-        Image: require('gameobjects/image/Image'),
-        Sprite: require('gameobjects/sprite/Sprite'),
-        Graphics: require('gameobjects/graphics/Graphics'),
+         Image: require('gameobjects/image/Image'),
+         Sprite: require('gameobjects/sprite/Sprite'),
+         Graphics: require('gameobjects/graphics/Graphics'),
+         Light: require('gameobjects/lights/Light'),
+         Factories: {
+             Image: require('gameobjects/image/ImageFactory'),
+             Sprite: require('gameobjects/sprite/SpriteFactory'),
+             Graphics: require('gameobjects/graphics/GraphicsFactory')
+         },
 
-        Factories: {
-            Image: require('gameobjects/image/ImageFactory'),
-            Sprite: require('gameobjects/sprite/SpriteFactory'),
-            Graphics: require('gameobjects/graphics/GraphicsFactory')
-        },
-
-        Creators: {
-            Image: require('gameobjects/image/ImageCreator'),
-            Sprite: require('gameobjects/sprite/SpriteCreator'),
-            Graphics: require('gameobjects/graphics/GraphicsFactory')
-        }
-    },
+         Creators: {
+             Image: require('gameobjects/image/ImageCreator'),
+             Sprite: require('gameobjects/sprite/SpriteCreator'),
+             Graphics: require('gameobjects/graphics/GraphicsFactory')
+         }
+     },
+    GameObjects:require('gameobjects'),
     Scene: require('scene/Scene'),
     ScenePlugin: require('scene/ScenePlugin'),
     Input: require('input/InputPlugin'),
@@ -38,7 +39,7 @@ var Phaser = {
         Scene2D: require('cameras/2d')
     },
     Events: require('events/EventEmitter'),
-    Loader: require('loader')
+    Loader: require('loader'),
 };
 
 //  Merge in the consts

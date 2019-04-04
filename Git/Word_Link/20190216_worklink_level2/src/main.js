@@ -1321,49 +1321,10 @@ class two extends Phaser.Scene {
         super("two");
     }
 
-    preload() {
-        if (gameLoaded) {
-            return;
-        }
 
-        var pic_name = [],
-            addFlag = false;
-
-        for (var p1 in assets) {
-            if (assets.hasOwnProperty(p1))
-                pic_name.push(p1);
-        }
-        for (var i = 0; i < pic_name.length; i++) {
-            if(pic_name[i] != "flares"){
-                this.textures.addBase64(pic_name[i], eval("assets." + pic_name[i]))
-            }
-            
-        }   
-
-        var sss = new Image();
-        sss.onload = () => {
-            this.textures.addAtlas('flares', sss, exc);
-        };
-        sss.src = assets.flares;
-
-        var imageCount = pic_name.length;
-        var loadedCount = 0;
-        this.textures.on('addtexture', function () {
-            loadedCount++;
-            if (imageCount == loadedCount) {
-                gameLoaded = true;
-                if (createOnLoaded) {
-                    this.create();
-                }
-            }
-        }, this);
-    }
 
     create() {
-        if (!gameLoaded) {
-            createOnLoaded = true;
-            return;
-        }
+
 
         this.showStart()
         // var downloadBtn = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'btn_download')
@@ -1501,10 +1462,7 @@ class two extends Phaser.Scene {
     }
 
     update(){
-        if (!gameLoaded) {
-            createOnLoaded = true;
-            return;
-        }
+
         if(this_.ansewrNum.length == 1 && this_.starFlag1 == 0){
             this_.starFlag1 = 1
             this.showStar(1)

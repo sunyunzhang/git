@@ -1,0 +1,1 @@
+../../../Public/tools/1_update_assets.py

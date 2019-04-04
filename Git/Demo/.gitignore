@@ -1,0 +1,24 @@
+Thumbs.db
+.DS_Store
+test
+
+# IDE
+.idea
+.vscode
+.histroy
+*.suo
+*.sublime-project
+*.sublime-workspace
+
+# Resource
+*.zip
+*.psd
+*.swp
+*.log
+
+# Vendors
+node_modules/
+
+# Build
+build/
+out/
