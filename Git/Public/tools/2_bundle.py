@@ -2,7 +2,12 @@
 # -*- coding: utf-8 -*-
 """ auto pack js to html """
 
+# requirements:
+# > npm install uglify-es -g
+
 import os
+import sys
+import re
 
 def main():
     """ main entry """
@@ -14,10 +19,26 @@ def main():
     js_code = ""
 
     for file in js_files:
-        n_file = open(src_dir + file, 'r')
-        js_code += n_file.read()
-        js_code += "\n"
+        min_file = ""
+        remove = False
+        if "min" in file: 
+           min_file = src_dir + file 
+        else:
+            min_file =  src_dir + file + ".min"
+            cmd = "uglifyjs -m --toplevel -c drop_console=true,unused=true " + src_dir + file + " -o " + min_file + " 2>/dev/null"
+            if 0 != os.system(cmd) : 
+                print("Error!\n\n" + cmd + "\n")
+                print("install npm modules:")
+                print("npm install uglify-es -g")
+                sys.exit(1)
+            remove = True
+
+        n_file = open(min_file, 'r')
+        js_code += "\n    " + n_file.read()
         n_file.close()
+
+        if remove :
+            os.remove(min_file)
 
     platforms = [["facebook", "fb"], ["adwords", "aw"]]
     for platform, prefix in platforms:

@@ -23,7 +23,7 @@ class playGame extends Phaser.Scene {
         if (gameLoaded) {
             return;
         }
-
+        
         var pic_name = [],
             addFlag = false;
 
@@ -65,72 +65,65 @@ class playGame extends Phaser.Scene {
         //wordLink()的三个参数，1，关卡名字（同json配置的关卡名字，格式是字符串）2.配置的json文件 3，回调函数的名字（格式是字符串）
         this.word = {
             //key为关卡名，如level1
-            level1:{
-                letter:[
+            level1: {
+                letter: [
                     {
-                        key:'a',
-                        x:256,
-                        y:500,
+                        key: 'b',
+                        x: 256,
+                        y: 500,
                         //宽度可选，默认30
                         // width:30
                     },
                     {
-                        key:'b',
-                        x:128,
-                        y:600,
+                        key: 'a',
+                        x: 136,
+                        y: 670,
                     },
                     {
-                        key:'c',
-                        x:384,
-                        y:600,
-                    },
-                    {
-                        key:'d',
-                        x:128,
-                        y:720,
-                    },
-                    {
-                        key:'e',
-                        x:256,
-                        y:760,
-                    },
-                    {
-                        key:'f',
-                        x:384,
-                        y:720,
+                        key: 't',
+                        x: 376,
+                        y: 670,
                     },
                 ],
-                plate:{
-                    key:'plate',
-                    position:{
-                        x:256,
-                        y:420,
+                plate: {
+                    key: 'plate',
+                    position: {
+                        x: 256,
+                        y: 420,
                     },
-                    select:0xCD853F,
-                    right:0x32CD32,
-                    wrong:0xFF0000,
-                    repeat:0xFFA500
+                    select: 0xCD853F,
+                    right: 0x32CD32,
+                    wrong: 0xFF0000,
+                    repeat: 0xFFA500
                 },
-                answer:['bc','abc','cabd','abcde','de',],
-                finishAnswer:[],
-                finish:false,
-                extraWords:['bcf'],
-                kuang:{
-                    key:'kuang',
-                    x:260,
-                    y:235,
-                    scale:0.5,
+                answer: ['at','bat','tab'],
+                finishAnswer: [],
+                finish: false,
+                extraWords: ['bcf'],
+                kuang: {
+                    key: 'kuang',
+                    x: 260,
+                    y: 235,
+                    scale: 0.8,
                     //框的真实宽高，默认80
                     // width:80,
                     // height:80
                 },
-                emit:{
-                    key:'star_particle'
-                }
+                emit: {
+                    key: 'star_particle'
+                },
+                starTitle:{
+                    key:'star_title',
+                    position: {
+                        x: 256,
+                        y: 50,
+                    },
+                    starName:'star'
+                },
+                guide:['tab','at']
             },
         }
 
-        
         this.wordLink('level1',this.word,'this.showDownload')
   
         this.resize();
@@ -150,48 +143,55 @@ class playGame extends Phaser.Scene {
     }
 
 
-    wordLink(levelName,jsonName,callback){
+    wordLink(levelName, jsonName, callback) {
         var this_ = this
         var letter_name = []
         var result = []
         var level
         var n = 1
-        var plate,graphics,circle
+        var plate, graphics, circle
         var letterShowName = []
-        var line = [], point = [] , circle_arr = []
-        var r , width 
+        var line = [],
+            point = [],
+            circle_arr = []
+        var r, width
         var leShow = []
-        var answerNum = 0
+        var answerNum = []
         var flag = true
+        
         showLetter()
         showKuang()
+        starTitle()
+        guide()
+        // 字母渲染
         function showLetter() {
-            for(var key in jsonName) {
-                if(levelName == key){
+            for (var key in jsonName) {
+                if (levelName == key) {
                     level = jsonName[key]
                     for (let j = 0; j < jsonName[key].letter.length; j++) {
-                        letter_name[j] = this_.add.image(jsonName[key].letter[j].x,jsonName[key].letter[j].y,'c_'+jsonName[key].letter[j].key).setInteractive().setDepth(2)
-                    }                
+                        letter_name[j] = this_.add.image(jsonName[key].letter[j].x, jsonName[key].letter[j].y, 'c_' + jsonName[key].letter[j].key).setInteractive().setDepth(2)
+                    }
                 }
             }
             letterDown()
         }
+        // 开始划线
         function letterDown() {
             for (let i = 0; i < letter_name.length; i++) {
-                letter_name[i].on('pointerdown',function (params) {
-                    if(flag == false){
+                letter_name[i].on('pointerdown', function (params) {
+                    if (flag == false) {
                         return
                     }
-                    this.setScale(1.2,1.2)
-                    if(result.indexOf(this.texture.key) == -1){
+                    this.setScale(1.2, 1.2)
+                    if (result.indexOf(this.texture.key) == -1) {
                         result.push(this.texture.key)
                         point.push(this)
                     }
-                    if(plate){
+                    if (plate) {
                         plate.destroy()
                     }
-                    plate = this_.add.image(level.plate.position.x,level.plate.position.y,level.plate.key).setScale(result.length/3,1).setTint(level.plate.select).setDepth(2)
-                    this_.input.on('pointermove',function(pointer){
+                    plate = this_.add.image(level.plate.position.x, level.plate.position.y, level.plate.key).setScale(result.length / 3, 1).setTint(level.plate.select).setDepth(2)
+                    this_.input.on('pointermove', function (pointer) {
 
                         //划线
                         if (graphics) {
@@ -199,42 +199,42 @@ class playGame extends Phaser.Scene {
                         }
                         graphics = this_.add.graphics(0, 0).setDepth(2)
                         graphics.lineStyle(10, 0x974734, 1.0);
-                        graphics.moveTo(this.x , this.y);
+                        graphics.moveTo(this.x, this.y);
                         graphics.lineTo(pointer.x, pointer.y);
                         graphics.strokePath();
-                        cir_p(pointer.x,pointer.y)
+                        cir_p(pointer.x, pointer.y)
 
-                    },this) 
+                    }, this)
                     circle_o()
                     dynamicWord()
                     for (let j = 0; j < letter_name.length; j++) {
-                        letter_name[j].on('pointerover',function (params) {
-                            if(this.scaleX == 1){
-                                this.setScale(1.2,1.2)      
-                                n++ 
-                                if(result.indexOf(this.texture.key) == -1){
+                        letter_name[j].on('pointerover', function (params) {
+                            if (this.scaleX == 1) {
+                                this.setScale(1.2, 1.2)
+                                n++
+                                if (result.indexOf(this.texture.key) == -1) {
                                     result.push(this.texture.key)
                                     point.push(this)
                                 }
-                                
+
                                 var this__ = this
                                 line_c(this__)
                                 showLine(this__)
                                 circle_o()
-                                dynamicWord()                          
-                                
-                            }else{
-                                if(this.texture.key == result[result.length-2]){
+                                dynamicWord()
+
+                            } else {
+                                if (this.texture.key == result[result.length - 2]) {
                                     var r
                                     for (let i = 0; i < letter_name.length; i++) {
-                                        if(letter_name[i].texture.key == result[result.length-1]){
+                                        if (letter_name[i].texture.key == result[result.length - 1]) {
                                             r = letter_name[i]
                                         }
                                     }
-                                    r.setScale(1,1)
-                                    line[line.length-1].destroy()
-                                    circle_arr[circle_arr.length-1].destroy()
-                                    letterShowName[letterShowName.length-1].destroy()
+                                    r.setScale(1, 1)
+                                    line[line.length - 1].destroy()
+                                    circle_arr[circle_arr.length - 1].destroy()
+                                    letterShowName[letterShowName.length - 1].destroy()
                                     line.pop()
                                     result.pop()
                                     point.pop()
@@ -245,7 +245,7 @@ class playGame extends Phaser.Scene {
                                     dynamicWord()
                                 }
                             }
-                            plate.scaleX = result.length/3 
+                            plate.scaleX = result.length / 3
                             console.log(result)
                             console.log(point)
                             console.log(n)
@@ -255,9 +255,9 @@ class playGame extends Phaser.Scene {
                     letterUp()
                     console.log(result)
                     // 光标圆点
-                    function cir_p(X,Y) {
+                    function cir_p(X, Y) {
                         var circ = new Phaser.Geom.Circle(0, 0, 10);
-                        if(circle){
+                        if (circle) {
                             circle.destroy()
                         }
                         circle = this_.add.graphics({
@@ -266,13 +266,13 @@ class playGame extends Phaser.Scene {
                             }
                         });
                         circle.setDepth(3)
-                        circle.fillCircleShape(circ);  
+                        circle.fillCircleShape(circ);
                         circle.x = X
-                        circle.y = Y                     
+                        circle.y = Y
                     }
                     // 字母上的圆点
                     function circle_o() {
-                        if(circle_arr.length>0){
+                        if (circle_arr.length > 0) {
                             for (let i = 0; i < circle_arr.length; i++) {
                                 circle_arr[i].destroy()
                             }
@@ -285,35 +285,34 @@ class playGame extends Phaser.Scene {
                                 }
                             });
                             circle_arr[i].setDepth(2)
-                            circle_arr[i].fillCircleShape(circ_); 
-                            
+                            circle_arr[i].fillCircleShape(circ_);
+
                         }
                     }
                     //两个字母之间直线
                     function showLine(this__) {
                         var index = result.indexOf(this__.texture.key)
-                        if(index>0){
-                            if(line.length>0){
+                        if (index > 0) {
+                            if (line.length > 0) {
                                 for (let i = 1; i < line.length; i++) {
                                     line[i].destroy()
-                                    if(i == line.length-1){
+                                    if (i == line.length - 1) {
                                         line = []
                                     }
                                 }
                             }
                             for (let i = 1; i < point.length; i++) {
-                                    line[i] = this_.add.graphics(0, 0).setDepth(2)
-                                    line[i].lineStyle(10, 0x974734, 1.0);
-                                    line[i].moveTo(point[i-1].x , point[i-1].y);
-                                    line[i].lineTo(point[i].x, point[i].y);
-                                    line[i].strokePath();
+                                line[i] = this_.add.graphics(0, 0).setDepth(2)
+                                line[i].lineStyle(10, 0x974734, 1.0);
+                                line[i].moveTo(point[i - 1].x, point[i - 1].y);
+                                line[i].lineTo(point[i].x, point[i].y);
+                                line[i].strokePath();
                             }
-                        
                         }
                     }
                     //变化线
                     function line_c(this__) {
-                        this_.input.on('pointermove',function(pointer){
+                        this_.input.on('pointermove', function (pointer) {
 
                             //划线
                             if (graphics) {
@@ -321,85 +320,95 @@ class playGame extends Phaser.Scene {
                             }
                             graphics = this_.add.graphics(0, 0).setDepth(2)
                             graphics.lineStyle(10, 0x974734, 1.0);
-                            graphics.moveTo(this__.x , this__.y);
+                            graphics.moveTo(this__.x, this__.y);
                             graphics.lineTo(pointer.x, pointer.y);
                             graphics.strokePath();
-                        },this)
+                        }, this)
                     }
                     //动态单词显示
                     function dynamicWord() {
-                        if(letterShowName.length>0){
+                        if (letterShowName.length > 0) {
                             for (let n = 0; n < letterShowName.length; n++) {
                                 letterShowName[n].destroy()
                             }
                         }
                         for (let n = 0; n < result.length; n++) {
-                            r = result[n].replace('c','s')
-                            letterShowName[n] = this_.add.image(level.plate.position.x,level.plate.position.y,r).setDepth(2)
+                            r = result[n].replace('c', 's')
+                            letterShowName[n] = this_.add.image(level.plate.position.x, level.plate.position.y, r).setDepth(2)
                         }
-                        if(level.letter[0].width){
+                        if (level.letter[0].width) {
                             width = level.letter[0].width
-                        }else{
+                        } else {
                             width = 30
                         }
                         for (let n = 0; n < letterShowName.length; n++) {
-                            if(n != (letterShowName.length-1)/2){
-                                letterShowName[n].x = level.plate.position.x+(n-(letterShowName.length-1)/2)*width
+                            if (n != (letterShowName.length - 1) / 2) {
+                                letterShowName[n].x = level.plate.position.x + (n - (letterShowName.length - 1) / 2) * width
                             }
-                        }                        
+                        }
                     }
 
                 })
-                
+
             }
         }
+        // 划线完毕，判断答案
         function letterUp() {
-            this_.input.on('pointerup',function() {
-                flag =false
+            this_.input.on('pointerup', function () {
+                flag = false
                 if (graphics) {
                     graphics.destroy()
                     circle.clear()
                 }
                 for (let i = 1; i < line.length; i++) {
                     line[i].destroy()
-                    if(i == line.length-1){
+                    if (i == line.length - 1) {
                         line = []
                     }
                 }
                 for (let i = 0; i < circle_arr.length; i++) {
                     circle_arr[i].destroy()
-                    if(i == circle_arr.length-1){
+                    if (i == circle_arr.length - 1) {
                         circle_arr = []
                         point = []
                     }
                 }
                 for (let i = 0; i < letter_name.length; i++) {
-                    letter_name[i].setScale(1,1)
-                    
+                    letter_name[i].setScale(1, 1)
+
                 }
                 for (let i = 0; i < letter_name.length; i++) {
                     letter_name[i].off('pointerover')
-                    
+
                 }
                 this_.input.off('pointermove')
-                var res = level.answer.indexOf(result.join('').replace(/c_/g,''))
-                if(res != -1 && level.finishAnswer.indexOf(result.join('').replace(/c_/g,''))==-1){
-                    level.finishAnswer.push(result.join('').replace(/c_/g,''))
+                var res = level.answer.indexOf(result.join('').replace(/c_/g, ''))
+                if (res != -1 && level.finishAnswer.indexOf(result.join('').replace(/c_/g, '')) == -1) {
+                    level.finishAnswer.push(result.join('').replace(/c_/g, ''))
+                    if(level.guide){
+                        for (let i = 0; i < level.guide.length; i++) {
+                            for (let j = 0; j < level.finishAnswer.length; j++) {
+                                if(level.guide[i] == level.finishAnswer[j]){
+                                    level.guide.splice(i, 1);
+                                }
+                            }
+                        }
+                    }
                     console.log('right')
                     plate.setTint(level.plate.right)
-                    for(var i = 0;i<letter_name.length;i++){
+                    for (var i = 0; i < letter_name.length; i++) {
                         this_.tweens.add({
-                            targets:[letter_name[i]],
-                            scaleX:1.0,
-                            scaleY:1.0,
-                            duration:300,
-                            ease:'Back',
-                            onComplete:()=>{
+                            targets: [letter_name[i]],
+                            scaleX: 1.0,
+                            scaleY: 1.0,
+                            duration: 300,
+                            ease: 'Back',
+                            onComplete: () => {
                                 plate.destroy()
                                 flag = true
                             }
                         })
-                        if(i == letter_name.length-1){
+                        if (i == letter_name.length - 1) {
                             setTimeout(() => {
                                 for (let i = 0; i < letterShowName.length; i++) {
                                     letterShowName[i].destroy()
@@ -408,22 +417,28 @@ class playGame extends Phaser.Scene {
                             }, 350);
                         }
                     }
-                    showAnswer(callback)
-                }else if(res != -1 && level.finishAnswer.indexOf(result.join('').replace(/c_/g,'')) !=-1){
+                    showAnswer()
+                    setTimeout(() => {
+                        starTitle(callback)
+                        if(level.guide.length>0 && letterShowName.length == 0){
+                            guide()
+                        }
+                    }, 1000);
+                } else if (res != -1 && level.finishAnswer.indexOf(result.join('').replace(/c_/g, '')) != -1) {
                     plate.setTint(level.plate.repeat)
-                    for(var i = 0;i<letter_name.length;i++){
+                    for (var i = 0; i < letter_name.length; i++) {
                         this_.tweens.add({
-                            targets:[letter_name[i]],
-                            scaleX:1.0,
-                            scaleY:1.0,
-                            duration:300,
-                            ease:'Back',
-                            onComplete:()=>{
+                            targets: [letter_name[i]],
+                            scaleX: 1.0,
+                            scaleY: 1.0,
+                            duration: 300,
+                            ease: 'Back',
+                            onComplete: () => {
                                 plate.destroy()
                                 flag = true
                             }
                         })
-                        if(i == letter_name.length-1){
+                        if (i == letter_name.length - 1) {
                             setTimeout(() => {
                                 for (let i = 0; i < letterShowName.length; i++) {
                                     letterShowName[i].destroy()
@@ -432,26 +447,28 @@ class playGame extends Phaser.Scene {
                             }, 350);
                         }
                     }
-                }else {
-                    if(result.length >1){
-                        if(level.extraWords.indexOf(result.join('').replace(/c_/g,'')) !=-1){
-                            var text1 = this_.add.text(0, 300, 'You found extra words',{ font: '50px Arial' })
+                } else {
+                    if (result.length > 1) {
+                        if (level.extraWords.indexOf(result.join('').replace(/c_/g, '')) != -1) {
+                            var text1 = this_.add.text(0, 300, 'You found extra words', {
+                                font: '50px Arial'
+                            })
                             text1.setTint(0xff00ff, 0xffff00, 0x0000ff, 0xff0000)
                             plate.setTint(level.plate.right)
-                            for(var i = 0;i<letter_name.length;i++){
+                            for (var i = 0; i < letter_name.length; i++) {
                                 this_.tweens.add({
-                                    targets:[letter_name[i]],
-                                    scaleX:1.0,
-                                    scaleY:1.0,
-                                    duration:400,
-                                    ease:'Back',
-                                    onComplete:()=>{
+                                    targets: [letter_name[i]],
+                                    scaleX: 1.0,
+                                    scaleY: 1.0,
+                                    duration: 400,
+                                    ease: 'Back',
+                                    onComplete: () => {
                                         plate.destroy()
                                         text1.destroy()
                                         flag = true
                                     }
                                 })
-                                if(i == letter_name.length-1){
+                                if (i == letter_name.length - 1) {
                                     setTimeout(() => {
                                         for (let i = 0; i < letterShowName.length; i++) {
                                             letterShowName[i].destroy()
@@ -460,40 +477,39 @@ class playGame extends Phaser.Scene {
                                     }, 450);
                                 }
                             }
-                        }else{
+                        } else {
                             plate.setTint(level.plate.wrong)
                             console.log('wrong')
-                            for(var i = 0 ;i<result.length;i++){
+                            for (var i = 0; i < result.length; i++) {
                                 var a = result[i]
-                                for(var j = 0;j < letter_name.length;j++){
-                                    if(a == letter_name[j].texture.key){
+                                for (var j = 0; j < letter_name.length; j++) {
+                                    if (a == letter_name[j].texture.key) {
                                         var b = letter_name[j]
                                         this_.tweens.add({
-                                            targets:[letter_name[j]],
-                                            angle:8,
-                                            scaleX:1.1,
-                                            scaleY:1.1,
-                                            duration:150,
-                                            onComplete:()=>{
+                                            targets: [letter_name[j]],
+                                            angle: 8,
+                                            scaleX: 1.1,
+                                            scaleY: 1.1,
+                                            duration: 150,
+                                            onComplete: () => {}
+                                        })
+                                        this_.tweens.add({
+                                            targets: [letter_name[j]],
+                                            delay: 150,
+                                            angle: -8,
+                                            scaleX: 1.0,
+                                            scaleY: 1.0,
+                                            duration: 150,
+                                            onComplete: () => {
+
                                             }
                                         })
                                         this_.tweens.add({
-                                            targets:[letter_name[j]],
-                                            delay:150,
-                                            angle:-8,
-                                            scaleX:1.0,
-                                            scaleY:1.0,
-                                            duration:150,
-                                            onComplete:()=>{
-                                                
-                                            }
-                                        })
-                                        this_.tweens.add({
-                                            targets:[letter_name[j]],
-                                            delay:300,
-                                            angle:0,
-                                            duration:150,
-                                            onComplete:()=>{
+                                            targets: [letter_name[j]],
+                                            delay: 300,
+                                            angle: 0,
+                                            duration: 150,
+                                            onComplete: () => {
                                                 for (let i = 0; i < letterShowName.length; i++) {
                                                     letterShowName[i].destroy()
                                                 }
@@ -506,10 +522,10 @@ class playGame extends Phaser.Scene {
                                 }
                             }
                         }
-                    }else{
+                    } else {
                         for (let i = 0; i < letter_name.length; i++) {
-                            if(result[0] == letter_name[i].texture.key){
-                                letter_name[i].setScale(1,1)
+                            if (result[0] == letter_name[i].texture.key) {
+                                letter_name[i].setScale(1, 1)
                             }
                         }
                         for (let i = 0; i < letterShowName.length; i++) {
@@ -524,66 +540,354 @@ class playGame extends Phaser.Scene {
                 this_.input.off('pointerup')
             })
         }
-        function showKuang(){
-            if(!level.kuang.width){
+        // 字母底框
+        function showKuang() {
+            if (!level.kuang.width) {
                 level.kuang.width = 80
                 level.kuang.height = 80
             }
             for (let i = 0; i < level.answer.length; i++) {
                 leShow[i] = []
                 for (let j = 0; j < level.answer[i].length; j++) {
-                    leShow[i][j] = this_.add.image(level.kuang.x,level.kuang.y,level.kuang.key).setScale(level.kuang.scale,level.kuang.scale).setDepth(1)
-                    if(i != (level.answer.length-1)/2){
-                        leShow[i][j].y = level.kuang.y + (i-(level.answer.length-1)/2)*(level.kuang.height*level.kuang.scale+10)
+                    leShow[i][j] = this_.add.image(level.kuang.x, level.kuang.y, level.kuang.key).setScale(level.kuang.scale, level.kuang.scale).setDepth(1)
+                    if (i != (level.answer.length - 1) / 2) {
+                        leShow[i][j].y = level.kuang.y + (i - (level.answer.length - 1) / 2) * (level.kuang.height * level.kuang.scale + 10)
                     }
-                    if(j != (level.answer[i].length-1)/2){
-                        leShow[i][j].x = level.kuang.x + (j-(level.answer[i].length-1)/2)*(level.kuang.width*level.kuang.scale+10)
+                    if (j != (level.answer[i].length - 1) / 2) {
+                        leShow[i][j].x = level.kuang.x + (j - (level.answer[i].length - 1) / 2) * (level.kuang.width * level.kuang.scale + 10)
                     }
                 }
             }
         }
-        function showAnswer(callback){
+        // 词盘显示答案
+        function showAnswer(callback) {
             var answerName = []
             var delay = 0
-            var res = level.answer.indexOf(result.join('').replace(/c_/g,''))
+            var res = level.answer.indexOf(result.join('').replace(/c_/g, ''))
             for (let i = 0; i < leShow[res].length; i++) {
-                answerName[i] = this_.add.image(leShow[res][i].x,leShow[res][i].y,'c_'+level.answer[res][i]).setScale(0,0).setDepth(2)
+                answerName[i] = this_.add.image(leShow[res][i].x, leShow[res][i].y, 'c_' + level.answer[res][i]).setScale(0, 0).setDepth(2)
                 this_.tweens.add({
-                    targets:[answerName[i]],
-                    delay:delay,
-                    scaleX:level.kuang.scale,
-                    scaleY:level.kuang.scale,
-                    ease:'Back',
-                    duration:200,
-                    onComplete:()=>{
-                        
+                    targets: [answerName[i]],
+                    delay: delay,
+                    scaleX: level.kuang.scale,
+                    scaleY: level.kuang.scale,
+                    ease: 'Back',
+                    duration: 200,
+                    onComplete: () => {
+
                     }
                 })
                 setTimeout(() => {
-                    showStar(leShow[res][i].x,leShow[res][i].y)
-                }, delay+50);
-                delay+=200
+                    showStar(leShow[res][i].x, leShow[res][i].y)
+                }, delay + 50);
+                delay += 200
             }
             answerNum++
-            if(answerNum == level.answer.length){
-                var callback = callback.replace('this','this_')
-                setTimeout(() => {
-                    eval(callback+'()')
-                }, 1000);
-            }
+            // if (answerNum == level.answer.length ) {
+            //     var callback = callback.replace('this', 'this_')
+            //     setTimeout(() => {
+            //         eval(callback + '()')
+            //     }, 2000);
+            // }
         }
-        function showStar(x,y){
-            var emitter = this_.add.particles(level.emit.key).setDepth(1).createEmitter({
+        // 星星爆炸效果
+        function showStar(x, y) {
+            var emitter = this_.add.particles(level.emit.key).setDepth(3).createEmitter({
                 x: x,
                 y: y,
-                scale: { start: 0.1, end: 0.1 },
-                speed: { min: 0, max: 100 },
-                rotate:{ min: 0, max: 360 },
-                quantity: 20,
+                scale: {
+                    start: 0.1,
+                    end: 0.2
+                },
+                speed: {
+                    min: 100,
+                    max: 100
+                },
+                rotate: {
+                    min: 0,
+                    max: 180
+                },
+                quantity: 10,
                 frequency: -1,
-                lifespan:500
+                lifespan: 500
             });
             emitter.explode()
+        }
+        // 星星进度条
+        function starTitle(callback) {
+            var star_title = this_.add.image(256,50,'star_title')
+            var star1 = this_.add.image(level.starTitle.position.x-36,level.starTitle.position.y,'star').setDepth(1).setVisible(0)
+            var star2 = this_.add.image(level.starTitle.position.x+20,level.starTitle.position.y,'star').setDepth(1).setVisible(0)
+            var star3 = this_.add.image(level.starTitle.position.x+76,level.starTitle.position.y,'star').setDepth(1).setVisible(0)
+            var n1 = this_.word.level1.answer.length
+            var n2 = this_.word.level1.finishAnswer.length
+            switch (n1) {
+                case 2:
+                    switch (n2/n1) {
+                        case 1/2:
+                            star1.visible = 1
+                            showStar(star1.x,star1.y)
+                            break;
+                        case 1:
+                            star2.visible = 1
+                            showStar(star2.x,star2.y)
+                            setTimeout(() => {
+                                star3.visible = 1
+                                showStar(star3.x,star3.y)
+                            }, 400);
+                            setTimeout(() => {
+                                eval(callback.replace('this', 'this_') + '()')
+                            }, 1000);
+                            break;
+                        default:
+                            break;
+                    }
+                case 3 :
+                    switch (n2/n1) {
+                        case 1/3:
+                            star1.visible = 1
+                            showStar(star1.x,star1.y)
+                            break;
+                        case 2/3:
+                            star2.visible = 1
+                            showStar(star2.x,star2.y)
+                            break;
+                        case 3/3:
+                            star3.visible = 1
+                            showStar(star3.x,star3.y)
+                            setTimeout(() => {
+                                eval(callback.replace('this', 'this_') + '()')
+                            }, 1000);
+                            break;                    
+                        default:
+                            break;
+                    }
+                case 4 :
+                    switch (n2/n1) {
+                        case 1/2:
+                            star1.visible = 1
+                            showStar(star1.x,star1.y)
+                            break;
+                        case 3/4:
+                            star2.visible = 1
+                            showStar(star2.x,star2.y)
+                            break;
+                        case 4/4:
+                            star3.visible = 1
+                            showStar(star3.x,star3.y)
+                            setTimeout(() => {
+                                eval(callback.replace('this', 'this_') + '()')
+                            }, 1000);
+                            break;                    
+                        default:
+                            break;
+                    }
+                default:
+                    break;
+
+            }
+            // console.log(int)
+        }
+        //引导
+        function guide() {
+            var nameArr1 = [],hand, n1 = 0,n2 = 0,pos,result,circ,circle,line = [],circle_arr = [],circle_f,int = [],graphics_hand
+            if(level.guide){
+                position()
+                showLine()
+                circle_o()
+                hand_move()
+                graphics()
+                clear()
+                
+                //各个位置
+                function position() {
+                    for (let i = 0; i < level.guide.length; i++) {
+                        nameArr1.push(level.guide[i].split(''))
+                    }
+                    for (let i = 0; i < nameArr1.length; i++) {
+                        for (let j = 0; j < nameArr1[i].length; j++) {
+                            nameArr1[i][j] = 'c_' + nameArr1[i][j]
+                        }
+                    }
+                    for (let j = 0; j < nameArr1.length; j++) {
+                        for (let n = 0; n < nameArr1[j].length; n++) {
+                            for (let i = 0; i < letter_name.length; i++){
+                                if(letter_name[i].texture.key == nameArr1[j][n]){
+                                    nameArr1[j][n] = {x:letter_name[i].x,y:letter_name[i].y}
+                                }
+                            }
+    
+                        }
+                    }
+                    hand = this_.add.image(nameArr1[n1][n2].x,nameArr1[n1][n2].y,'hand').setDepth(5).setScale(0.5).setOrigin(0,0).setAlpha(0)
+                    var circ = new Phaser.Geom.Circle(0, 0, 10);
+                    if (circle) {
+                        circle.destroy()
+                    }
+                    circle_f = this_.add.graphics({
+                        fillStyle: {
+                            color: 0x974734
+                        }
+                    });
+                    circle_f.setDepth(3)
+                    circle_f.fillCircleShape(circ);
+                    circle_f.x = nameArr1[n1][n2].x
+                    circle_f.y = nameArr1[n1][n2].y
+                }
+                // 手移动
+                function hand_move () {
+                    if(hand.alpha == 0){
+                        this_.tweens.add({
+                            targets:hand,
+                            alpha:1,
+                            duration:200,
+                            onComplete:()=>{
+                                for (let i = 0; i < nameArr1[n1].length; i++) {
+                                    this_.tweens.add({
+                                        targets:hand,
+                                        x:nameArr1[n1][i].x,
+                                        y:nameArr1[n1][i].y,
+                                        duration:800,
+                                        delay:i*800,
+                                        onComplete:()=>{
+                                            if(hand.x == nameArr1[n1][nameArr1[n1].length-1].x && hand.y == nameArr1[n1][nameArr1[n1].length-1].y){
+                                                this_.tweens.add({
+                                                    targets:[hand],
+                                                    alpha:0,
+                                                    duration:300,
+                                                    onComplete:()=>{
+                                                        hand.x = nameArr1[n1][n2].x
+                                                        hand.y = nameArr1[n1][n2].y 
+                                                        hand_move()
+                                                        for (let i = 1; i < line.length; i++) {
+                                                            line[i].destroy()
+                                                        }
+                                                        for (let i = 0; i < circle_arr.length; i++) {
+                                                            circle_arr[i].destroy()                                                          
+                                                        }
+                                                        showLine()
+                                                        circle_o()
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    }
+                }
+                // 划线
+                function graphics() {
+                    var x,y, n = 1
+                    interval(function(){
+
+                    },1);
+                    clearInterval(int)
+                    int.push(                    
+                        
+                        setInterval(() => {
+                        
+                        pos = {x: hand.x,y: hand.y}
+                        cir_p(hand.x,hand.y,hand.alpha)
+                        result = nameArr1[n1].some(item=>{
+                            n = nameArr1[n1].indexOf(item)
+                            if(item.x == pos.x && item.y == pos.y){
+                                return true
+                            }
+                        })
+                        if(result == true){
+                            x = pos.x,
+                            y = pos.y
+
+                            if(n>0){
+                                line[n].visible = 1
+                                circle_arr[n-1].visible = 1
+                                circle_arr[n].visible = 1
+                            }
+                        }
+                        if (graphics_hand) {
+                            graphics_hand.destroy()
+                        }
+                        graphics_hand = this_.add.graphics(0, 0).lineStyle(10, 0x974734, 1.0).setDepth(4)
+                        graphics_hand.moveTo(x, y);
+                        graphics_hand.lineTo(hand.x,hand.y);
+                        graphics_hand.strokePath();
+                    }, 1))
+
+                }
+                function interval(func, wait){
+                    var interv = function(){
+                      func.call();
+                      setTimeout(interv, wait);
+                    };
+                  
+                    setTimeout(interv, wait);
+                }
+                // 清除函数
+                function clear() {
+                    this_.input.on('pointerdown',function () {
+                        hand.destroy()
+                        graphics_hand.destroy()
+                        circle.destroy()
+                        circle_f.destroy()
+                        
+                        for (let i = 0; i < int.length; i++) {
+                            clearInterval(int[i])
+                            
+                        }
+                        int = []
+                        for (let i = 1; i < line.length; i++) {
+                            line[i].destroy()
+                        }
+                        hand = []
+                        this_.input.off('pointerdown')
+                    })
+                }
+                // 光标圆点
+                function cir_p(X, Y,alpha) {
+                    circ = new Phaser.Geom.Circle(0, 0, 10);
+                    if (circle) {
+                        circle.destroy()
+                    }
+                    circle = this_.add.graphics({
+                        fillStyle: {
+                            color: 0x974734
+                        }
+                    });
+                    circle.setDepth(3)
+                    circle.fillCircleShape(circ);
+                    circle.x = X
+                    circle.y = Y
+                    circle.alpha = alpha
+                }
+                //两个字母之间直线
+                function showLine() {
+                    for (let i = 1; i < nameArr1[n1].length; i++) {
+                        line[i] = this_.add.graphics(0, 0).setDepth(2).setVisible(0)
+                        line[i].lineStyle(10, 0x974734, 1.0);
+                        line[i].moveTo(nameArr1[n1][i - 1].x, nameArr1[n1][i - 1].y);
+                        line[i].lineTo(nameArr1[n1][i].x, nameArr1[n1][i].y);
+                        line[i].strokePath();
+                    }
+                }
+                // 字母上的圆点
+                function circle_o() {
+                    for (let i = 0; i < nameArr1[n1].length; i++) {
+                        var circ_ = new Phaser.Geom.Circle(nameArr1[n1][i].x, nameArr1[n1][i].y, 10);
+                        circle_arr[i] = this_.add.graphics({
+                            fillStyle: {
+                                color: 0x974734
+                            }
+                        }).setVisible(0);
+                        circle_arr[i].setDepth(2)
+                        circle_arr[i].fillCircleShape(circ_);
+
+                    }
+                    // circle_arr[0].visible = 1
+                }
+            }
+                
         }
     }
 

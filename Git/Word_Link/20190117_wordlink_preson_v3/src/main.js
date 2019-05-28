@@ -208,7 +208,7 @@ class playGame extends Phaser.Scene {
         this.match1(this.arr_key1, this.arr_value1)
         this.showHand()
 
-        this.download(4)
+        // this.download(4)
 
 
         this.resize();

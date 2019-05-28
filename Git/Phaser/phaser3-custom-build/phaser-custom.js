@@ -5,28 +5,31 @@ var Extend = require('utils/object/Extend');
 
 var Phaser = {
 
-    Game: require('boot/Game'),
-     GameObjects: {
+    Game: require('core/Game'),
+    GameObjects: {
          DisplayList: require('gameobjects/DisplayList'),
          UpdateList: require('gameobjects/UpdateList'),
 
          Image: require('gameobjects/image/Image'),
-         Sprite: require('gameobjects/sprite/Sprite'),
+         Particle: require('gameobjects/particles/Particle'),
+         // Sprite: require('gameobjects/sprite/Sprite'),
          Graphics: require('gameobjects/graphics/Graphics'),
-         Light: require('gameobjects/lights/Light'),
+         // Light: require('gameobjects/lights/Light'),
          Factories: {
              Image: require('gameobjects/image/ImageFactory'),
-             Sprite: require('gameobjects/sprite/SpriteFactory'),
+             Particle: require('gameobjects/particles/ParticleManagerFactory'),
+             // Sprite: require('gameobjects/sprite/SpriteFactory'),
              Graphics: require('gameobjects/graphics/GraphicsFactory')
          },
 
          Creators: {
              Image: require('gameobjects/image/ImageCreator'),
-             Sprite: require('gameobjects/sprite/SpriteCreator'),
+             // Sprite: require('gameobjects/sprite/SpriteCreator'),
+             Particle: require('gameobjects/particles/ParticleManagerCreator'),
              Graphics: require('gameobjects/graphics/GraphicsFactory')
          }
      },
-    GameObjects:require('gameobjects'),
+    // GameObjects:require('gameobjects'),
     Scene: require('scene/Scene'),
     ScenePlugin: require('scene/ScenePlugin'),
     Input: require('input/InputPlugin'),

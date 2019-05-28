@@ -22,6 +22,8 @@ def read_base64(fname):
             mime = 'image/jpeg'
         elif ext == '.cur':
             mime = 'image/x-win-bitmap'
+        elif ext == '.mp4':
+            mime = 'video/mp4'
         elif ext == '.ico':
             mime = 'application/octet-stream'
         else:
@@ -40,7 +42,7 @@ def main():
         _, ext = os.path.splitext(file)
 
         # list file with illegal extension
-        if ext[1:] in ['jpg', 'png', 'cur', 'ico']:
+        if ext[1:] in ['jpg', 'png', 'cur', 'ico','mp4']:
             name = file[:-4]
             assets[name] = read_base64(res_dir + file)
             # continue
