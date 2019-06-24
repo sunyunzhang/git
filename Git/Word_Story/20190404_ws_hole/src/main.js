@@ -65,7 +65,7 @@ class playGame extends Phaser.Scene {
 
         this.letters = {
             pick: {
-                letter_c: ['i', 'p','k','c'],
+                letter_c: ['i', 'p','k','c',],
                 answer: 'pick',
                 // prompt:[],
                 box: 'box',
